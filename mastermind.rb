@@ -43,9 +43,8 @@ module ComputerPlay
 
     def computer_play()
         set_code
-        @try=[]
-        exact_choices=[]
-        imperfect_choices=[]
+        @try=0
+        @exact_choices=[]
         while @num_chances >= 0 and game_not_over?
             @num_chances -= 1
             simulate_play
@@ -71,26 +70,29 @@ module ComputerPlay
     end
 
     def simulate_play()
-        #for i in 0..3
-        #    pick=@COLORS[rand(7)] if i == 0
-        #    pick=@COLORS[rand(7)] while @select.include?pick
-        #    @select.push(pick)
-        #end
-        if @num_chances == 9
-            @select.push(@COLORS[0],@COLORS[0],@COLORS[1],@COLORS[1])
-            @try.push(0,1)
+        if @exact_choices.length < 4
+            @select.push(@COLORS[@try],@COLORS[@try],@COLORS[@try],@COLORS[@try])
+        else 
+            picks=[]
+            for i in 0..3
+                pick=@exact_choices[rand(4)] if i == 0
+                pick=@exact_choices[rand(4)] while picks.include?pick
+                picks.push(pick)
+                @select.push(@COLORS[pick])
+            end
         end
         puts "The computer has chosen : #{@select}"
     end
 
     def calculate_guess()
-        if @exact_matches == 1 or @imperfect_matches == 1
-            @select.push(@COLORS[@try[0]],@COLORS[@try[0]],@COLORS[@try.pop()+1],@COLORS[@try.pop()+1])
-        elsif @exact_matches == 2
-            @select.push(@COLORS[@try[0]],@COLORS[@try[1]],@COLORS[@try.pop()+1],@COLORS[@try.pop()+1])
-        else
-            @select.push(@COLORS[@try.pop()+1],@COLORS[@try.pop()+1],@COLORS[@try.pop()+2],@COLORS[@try.pop()+2])
+        @select=[]
+        if @exact_choices.length < 4 
+            if @exact_matches > 0
+                @exact_choices.push(@try)
+            end
+            @try += 1
         end
+        
     end
 
 end
